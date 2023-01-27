@@ -35,5 +35,12 @@ app.get('/talker/:id', async (req, res) => {
   if (number) {
     return res.status(HTTP_OK_STATUS).json(number);
   }
-  return res.status(HTTP_NOT_STATUS).json({ "message": "Pessoa palestrante não encontrada" });
+  return res.status(HTTP_NOT_STATUS).json({ message: 'Pessoa palestrante não encontrada' });
+});
+
+app.post('/login', (req, res) => {
+  const partA = Math.random().toString(16).substring(2);
+  const partB = Math.random().toString(16).substring(2);
+  const token = (partA + partB).substring(0, 16);
+  return res.status(HTTP_OK_STATUS).json({ token });
 });
