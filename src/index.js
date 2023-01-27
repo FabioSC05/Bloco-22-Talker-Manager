@@ -84,3 +84,38 @@ async (req, res) => {
   await writeData(read);
   return res.status(CREATED).json(object);
 });
+
+app.put('/talker/:id',
+  checkToken,
+  checkName,
+  checkAge,
+  checkTalk,
+  checkWatched,
+  checkRate,
+async (req, res) => {
+  const { id } = req.params;
+  const { name, age, talk } = req.body;
+  const read = await readData();
+  const removeId = read.filter((num) => num.id !== Number(id));
+  const object = {
+    id: Number(id),
+    name,
+    age,
+    talk,
+  };
+  removeId.push(object);
+  removeId.sort((a, b) => a.id - b.id);
+  await writeData(removeId);
+  return res.status(HTTP_OK_STATUS).json(object);
+});
+
+/* app.delete('/talker/:id',
+  checkToken,
+async (req, res) => {
+  const { id } = req.params;
+  const read = await readData();
+  const removeId = read.filter((num) => num.id !== Number(id));
+  removeId.sort((a, b) => a.id - b.id);
+  await writeData(removeId);
+  return res.status(HTTP_OK_STATUS).json(object);
+}); */

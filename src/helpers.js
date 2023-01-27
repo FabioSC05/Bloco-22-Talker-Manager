@@ -81,7 +81,7 @@ const checkWatched = (req, res, next) => {
 const checkRate = (req, res, next) => {
   const { talk } = req.body;
   const { rate } = talk;
-  if (!rate) {
+  if (rate === undefined) {
     return res.status(BAD).json({ message: 'O campo "rate" é obrigatório' });
   }
   if (!(Number.isInteger(rate)) || (rate < 1 || rate > 5)) {
