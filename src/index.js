@@ -1,10 +1,21 @@
 const express = require('express');
-const fs = require('fs').promises;
+const {
+  readData,
+  writeData,
+  regexEmail,
+  checkToken,
+  checkName,
+  checkAge,
+  checkTalk,
+  checkWatched,
+  checkRate,
+} = require('./helpers');
 
 const app = express();
 app.use(express.json());
 
 const HTTP_OK_STATUS = 200;
+const CREATED = 201;
 const BAD = 400;
 const NOT = 404;
 const PORT = '3000';
@@ -17,18 +28,6 @@ app.get('/', (_request, response) => {
 app.listen(PORT, () => {
   console.log('Online');
 });
-
-const readData = async () => {
-  const data = await fs.readFile('./src/talker.json', 'utf-8');
-  const result = JSON.parse(data);
-  return result;
-};
-
-const regex = (email) => {
-  const regexEmail = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]+$/;
-  const result = regexEmail.test(email);
-  return result;
-};
 
 app.get('/talker', async (req, res) => {
   const read = await readData();
@@ -53,7 +52,7 @@ app.post('/login', (req, res) => {
   if (!email) {
     return res.status(BAD).json({ message: 'O campo "email" é obrigatório' });
   }
-  if (!regex(email)) {
+  if (!regexEmail(email)) {
     return res.status(BAD).json({ message: 'O "email" deve ter o formato "email@email.com"' });
   }
   if (!password) {
@@ -63,4 +62,25 @@ app.post('/login', (req, res) => {
     return res.status(BAD).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
   }
   return res.status(HTTP_OK_STATUS).json({ token });
+});
+
+app.post('/talker',
+  checkToken,
+  checkName,
+  checkAge,
+  checkTalk,
+  checkWatched,
+  checkRate,
+async (req, res) => {
+  const { name, age, talk } = req.body;
+  const read = await readData();
+  const object = {
+    id: read.length + 1,
+    name,
+    age,
+    talk,
+  };
+  read.push(object);
+  await writeData(read);
+  return res.status(CREATED).json(object);
 });
