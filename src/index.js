@@ -16,6 +16,7 @@ app.use(express.json());
 
 const HTTP_OK_STATUS = 200;
 const CREATED = 201;
+const DELETED = 204;
 const BAD = 400;
 const NOT = 404;
 const PORT = '3000';
@@ -109,13 +110,12 @@ async (req, res) => {
   return res.status(HTTP_OK_STATUS).json(object);
 });
 
-/* app.delete('/talker/:id',
+app.delete('/talker/:id',
   checkToken,
 async (req, res) => {
   const { id } = req.params;
   const read = await readData();
   const removeId = read.filter((num) => num.id !== Number(id));
-  removeId.sort((a, b) => a.id - b.id);
   await writeData(removeId);
-  return res.status(HTTP_OK_STATUS).json(object);
-}); */
+  return res.status(DELETED).json();
+});
