@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('fs').promises;
 
 const app = express();
 app.use(express.json());
@@ -13,4 +14,15 @@ app.get('/', (_request, response) => {
 
 app.listen(PORT, () => {
   console.log('Online');
+});
+
+const readData = async () => {
+  const data = await fs.readFile('./src/talker.json', 'utf-8');
+  const result = JSON.parse(data);
+  return result;
+};
+
+app.get('/talker', async (req, res) => {
+  const read = await readData();
+  return res.status(HTTP_OK_STATUS).json(read);
 });
